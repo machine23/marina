@@ -4,13 +4,14 @@ from django.test import TestCase
 
 class TestQuestionModel(TestCase):
     def test_saving_and_retrieving_questions(self):
-        first_question = Question()
-        first_question.text = 'The first question'
-        first_question.save()
+        Question.objects.create(
+            text='The first question',
+            answer='The first answer',
+        )
 
-        second_question = Question()
-        second_question.text = 'The second question'
-        second_question.save()
+        Question.objects.create(
+            text='The second question',
+        )
 
         saved_questions = Question.objects.all()
 
@@ -19,7 +20,9 @@ class TestQuestionModel(TestCase):
         first_saved_question = saved_questions[0]
         second_saved_question = saved_questions[1]
         assert first_saved_question.text == 'The first question'
+        assert first_saved_question.answer == 'The first answer'
         assert second_saved_question.text == 'The second question'
+        assert second_saved_question.answer == ''
 
     def test_string_representation(self):
         question = Question(text='question text')
