@@ -56,3 +56,13 @@ class TestCreateView:
         question = Question.objects.first()
         assert question.text == 'Question text 1'
         assert question.answer == 'Answer text 1'
+
+
+class TestTrainingView:
+    def test_trainingview_exists(self, client):
+        resp = client.get('/training')
+        assert resp.status_code == 200
+
+    def test_trainingview_url_accessible_by_name(self, client):
+        resp = client.get(reverse('quiz:training'))
+        assert resp.status_code == 200
