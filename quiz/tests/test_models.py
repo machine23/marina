@@ -27,3 +27,8 @@ class TestQuestionModel:
     def test_string_representation(self):
         question = Question(text='question text')
         assert str(question) == question.text
+
+    def test_text_field_label(self):
+        question = mixer.blend(Question)
+        field_label = question._meta.get_field('text').verbose_name
+        assert field_label == 'Question'
