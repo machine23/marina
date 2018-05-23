@@ -1,17 +1,17 @@
+import pytest
+from mixer.backend.django import mixer
+
 from quiz.models import Question
-from django.test import TestCase
+
+pytestmark = pytest.mark.django_db
 
 
-class TestQuestionModel(TestCase):
+class TestQuestionModel:
     def test_saving_and_retrieving_questions(self):
-        Question.objects.create(
-            text='The first question',
-            answer='The first answer',
-        )
+        mixer.blend(
+            Question, text='The first question', answer='The first answer')
 
-        Question.objects.create(
-            text='The second question',
-        )
+        Question.objects.create(text='The second question', )
 
         saved_questions = Question.objects.all()
 
