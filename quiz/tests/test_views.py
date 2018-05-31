@@ -66,3 +66,21 @@ class TestTrainingView:
     def test_trainingview_url_accessible_by_name(self, client):
         resp = client.get(reverse('quiz:training'))
         assert resp.status_code == 200
+
+    def test_trainingview_uses_correct_template(self, client):
+        resp = client.get(reverse('quiz:training'))
+        used_templates = {template.name for template in resp.templates}
+        expect_templates = {'base.html', 'quiz/training.html'}
+        assert used_templates == expect_templates
+
+    def test_question_in_context(self, client):
+        question = mixer.blend(
+            'quiz.Question', text='question', answer='answer')
+        response = client.get(reverse('quiz:training'))
+        assert 'question' in response.context
+        assert response.context['question'] == question
+
+    def test_displays_question(self, client):
+        question = mixer.blend('quiz.Question', text='How do you do?')
+        response = client.get(reverse('quiz:training'))
+        assert question.text in response.content.decode()
