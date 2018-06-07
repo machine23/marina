@@ -98,3 +98,19 @@ class TestTrainingView:
         assert 'question_id' in session
         assert question.id == session['question_id']
         assert response.context['question'].id == session['question_id']
+
+    def test_post_with_right_answer(self, client):
+        question = mixer.blend('quiz.Question')
+        client.get(reverse('quiz:training'))
+        data = {'answer': question.answer}
+        response = client.post(reverse('quiz:training'), data=data)
+        assert response.status_code == 302
+
+    def test_post_with_wrong_answer(self, client):
+        question = mixer.blend('quiz.Question', answer='good')
+        client.get(reverse('quiz:training'))
+        data = {'answer': 'bad'}
+        response = client.post(reverse('quiz:training'), data=data)
+        assert response.status_code == 200
+        assert 'question' in response.context
+        assert response.context['question'] == question

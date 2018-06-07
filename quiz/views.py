@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, View
 from django.views.generic.edit import CreateView
@@ -29,6 +29,21 @@ class TrainingView(View):
         if question:
             request.session['question_id'] = question.id
         form = QuizForm()
+        context = {
+            'question': question,
+            'form': form,
+        }
+        return render(request, 'quiz/training.html', context)
+
+    def post(self, request):
+        question_id = request.session['question_id']
+        question = Question.objects.get(pk=question_id)
+        form = QuizForm(request.POST)
+        if form.is_valid():
+            answer = form.cleaned_data['answer']
+            if answer == question.answer:
+                return redirect('quiz:training')
+        
         context = {
             'question': question,
             'form': form,
