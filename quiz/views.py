@@ -26,6 +26,8 @@ class QuestionCreate(CreateView):
 class TrainingView(View):
     def get(self, request):
         question = Question.objects.first()
+        if question:
+            request.session['question_id'] = question.id
         form = QuizForm()
         context = {
             'question': question,

@@ -90,3 +90,11 @@ class TestTrainingView:
         response = client.get(reverse('quiz:training'))
         assert 'form' in response.context
         assert isinstance(response.context['form'], QuizForm)
+
+    def test_question_id_in_session(self, client):
+        question = mixer.blend('quiz.Question')
+        response = client.get(reverse('quiz:training'))
+        session = client.session
+        assert 'question_id' in session
+        assert question.id == session['question_id']
+        assert response.context['question'].id == session['question_id']
