@@ -74,43 +74,25 @@ class TestTrainingView:
         expect_templates = {'base.html', 'quiz/training.html'}
         assert used_templates == expect_templates
 
-    def test_question_in_context(self, client):
-        question = mixer.blend(
-            'quiz.Question', text='question', answer='answer')
-        response = client.get(reverse('quiz:training'))
-        assert 'question' in response.context
-        assert response.context['question'] == question
-
-    def test_displays_question(self, client):
-        question = mixer.blend('quiz.Question', text='How do you do?')
-        response = client.get(reverse('quiz:training'))
-        assert question.text in response.content.decode()
-
     def test_quizform_in_context(self, client):
         response = client.get(reverse('quiz:training'))
         assert 'form' in response.context
         assert isinstance(response.context['form'], QuizForm)
 
-    def test_question_id_in_session(self, client):
-        question = mixer.blend('quiz.Question')
-        response = client.get(reverse('quiz:training'))
-        session = client.session
-        assert 'question_id' in session
-        assert question.id == session['question_id']
-        assert response.context['question'].id == session['question_id']
 
-    def test_post_with_right_answer(self, client):
+class TestQuestionView:
+    def test_get(self, client):
         question = mixer.blend('quiz.Question')
-        client.get(reverse('quiz:training'))
-        data = {'answer': question.answer}
-        response = client.post(reverse('quiz:training'), data=data)
-        assert response.status_code == 302
-
-    def test_post_with_wrong_answer(self, client):
-        question = mixer.blend('quiz.Question', answer='good')
-        client.get(reverse('quiz:training'))
-        data = {'answer': 'bad'}
-        response = client.post(reverse('quiz:training'), data=data)
+        response = client.get(reverse('quiz:question'))
+        expect = {
+            'question': question.text,
+            'answer': question.answer,
+        }
         assert response.status_code == 200
-        assert 'question' in response.context
-        assert response.context['question'] == question
+        assert response.json() == expect
+
+    def test_get_no_repeat(self, client):
+        mixer.cycle(2).blend('quiz.Question')
+        response1 = client.get(reverse('quiz:question'))
+        response2 = client.get(reverse('quiz:question'))
+        assert response1.json() != response2.json()

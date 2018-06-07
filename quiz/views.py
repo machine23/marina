@@ -1,4 +1,7 @@
-from django.shortcuts import render, redirect
+import random
+
+from django.http import JsonResponse
+from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, View
 from django.views.generic.edit import CreateView
@@ -25,27 +28,23 @@ class QuestionCreate(CreateView):
 
 class TrainingView(View):
     def get(self, request):
-        question = Question.objects.first()
-        if question:
-            request.session['question_id'] = question.id
         form = QuizForm()
         context = {
-            'question': question,
             'form': form,
         }
         return render(request, 'quiz/training.html', context)
 
-    def post(self, request):
-        question_id = request.session['question_id']
-        question = Question.objects.get(pk=question_id)
-        form = QuizForm(request.POST)
-        if form.is_valid():
-            answer = form.cleaned_data['answer']
-            if answer == question.answer:
-                return redirect('quiz:training')
-        
-        context = {
-            'question': question,
-            'form': form,
+
+class QuestionView(View):
+    def get(self, request):
+        questions = Question.objects.all()
+        while True:
+            question = random.choice(questions)
+            if request.session.get('question_id') != question.id:
+                break
+        request.session['question_id'] = question.id
+        data = {
+            'question': question.text,
+            'answer': question.answer,
         }
-        return render(request, 'quiz/training.html', context)
+        return JsonResponse(data)
