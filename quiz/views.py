@@ -37,6 +37,7 @@ class TrainingView(View):
 
 class QuestionView(View):
     def get(self, request):
+        print(request.COOKIES)
         questions = Question.objects.all()
         while True:
             question = random.choice(questions)
