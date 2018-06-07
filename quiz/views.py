@@ -1,9 +1,10 @@
+from django.shortcuts import render
+from django.urls import reverse_lazy
 from django.views.generic import TemplateView, View
 from django.views.generic.edit import CreateView
-from django.shortcuts import render
+
+from quiz.forms import QuizForm
 from quiz.models import Question
-from django.urls import reverse_lazy
-from django.http import HttpResponse
 
 
 class IndexView(TemplateView):
@@ -25,7 +26,9 @@ class QuestionCreate(CreateView):
 class TrainingView(View):
     def get(self, request):
         question = Question.objects.first()
+        form = QuizForm()
         context = {
             'question': question,
+            'form': form,
         }
         return render(request, 'quiz/training.html', context)

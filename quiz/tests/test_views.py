@@ -3,6 +3,7 @@ from django.urls import reverse
 from mixer.backend.django import mixer
 
 from quiz.models import Question
+from quiz.forms import QuizForm
 
 pytestmark = pytest.mark.django_db
 
@@ -84,3 +85,8 @@ class TestTrainingView:
         question = mixer.blend('quiz.Question', text='How do you do?')
         response = client.get(reverse('quiz:training'))
         assert question.text in response.content.decode()
+
+    def test_quizform_in_context(self, client):
+        response = client.get(reverse('quiz:training'))
+        assert 'form' in response.context
+        assert isinstance(response.context['form'], QuizForm)
