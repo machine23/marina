@@ -1,37 +1,15 @@
 {% extends 'base.html' %} {% block content %}
 <h1>Training</h1>
 <div id="question"></div>
-<div id="answer"></div>
+<textarea cols="40" rows="10" id="answer" readonly></textarea>
 <form id="quiz_form">
     {{ form.as_p }}
+    <button id="skip">Skip</button>
     <input type="submit" value="Check">
 </form>
+{% load static %}
 <script>
-    window.onload = getQuestion;
-    let form = document.querySelector('#quiz_form');
-    let answer = '';
-    form.onsubmit = checkAnswer;
-    function getQuestion() {
-        fetch('{% url "quiz:question" %}', {
-            credentials: 'include',
-        })
-            .then(response => response.json())
-            .then(json => {
-                console.log(json)
-                document.querySelector('#question').innerHTML = json.question;
-                document.querySelector('#answer').innerHTML = '';
-                document.querySelector('#id_answer').value = '';
-                answer = json.answer;
-            })
-    }
-    function checkAnswer(e) {
-        e.preventDefault();
-        user_answer = document.querySelector('#id_answer').value;
-        if (user_answer === answer) {
-            getQuestion();
-        } else {
-            document.querySelector('#answer').innerHTML = answer;
-        }
-    }
-    console.log(form)
+    const URL = "{% url 'quiz:question' %}";
+</script>
+<script src="{% static '/quiz/training.js' %}">
 </script> {% endblock %}
