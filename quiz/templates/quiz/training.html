@@ -1,12 +1,26 @@
 {% extends 'base.html' %} {% block content %}
-<h1>Training</h1>
-<div id="question"></div>
-<textarea cols="40" rows="10" id="answer" readonly></textarea>
-<form id="quiz_form">
-    {{ form.as_p }}
-    <button id="skip">Skip</button>
-    <input type="submit" value="Check">
-</form>
+<div class="container">
+    <h1>Training</h1>
+    <div class="row">
+        <div id="question"></div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+                <textarea cols="40" rows="10" id="answer" readonly class="form-control"></textarea>
+            </div>
+        </div>
+        <div class="col">
+            <form id="quiz_form">
+                <div class="form-group">
+                    <textarea name="answer" cols="40" rows="10" required="" id="id_answer" class="form-control"></textarea>
+                </div>
+                <button id="skip" class="btn btn-secondary">Skip</button>
+                <input type="submit" value="Check" class="btn btn-success">
+            </form>
+        </div>
+    </div>
+</div>
 {% load static %}
 <script>
     const URL = "{% url 'quiz:question' %}";
