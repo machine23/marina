@@ -39,10 +39,13 @@ class QuestionView(View):
     def get(self, request):
         print(request.COOKIES)
         questions = Question.objects.all()
-        while True:
-            question = random.choice(questions)
-            if request.session.get('question_id') != question.id:
-                break
+        if questions.count() > 1:
+            while True:
+                question = random.choice(questions)
+                if request.session.get('question_id') != question.id:
+                    break
+        else:
+            question = questions.first()
         request.session['question_id'] = question.id
         data = {
             'question': question.text,

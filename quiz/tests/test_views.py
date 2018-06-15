@@ -91,6 +91,12 @@ class TestQuestionView:
         assert response.status_code == 200
         assert response.json() == expect
 
+    def test_get_repeat_if_only_one_question_in_db(self, client):
+        mixer.blend('quiz.Question')
+        response1 = client.get(reverse('quiz:question'))
+        response2 = client.get(reverse('quiz:question'))
+        assert response1.json() == response2.json()
+
     def test_get_no_repeat(self, client):
         mixer.cycle(2).blend('quiz.Question')
         response1 = client.get(reverse('quiz:question'))
